@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class SetupGame {
 	private String playerName; 
-	private int days;
+	private int maxDays;
 	private Monster starter;
 	private int difficulty;
 	
@@ -15,8 +15,8 @@ public class SetupGame {
 		playerName = name;
 		
 		System.out.println("Select the number of days "); /*I believe it has to be 10-15 days*/
-		int numDay = sc.nextInt();
-		days = numDay;
+		int max = sc.nextInt();
+		maxDays = max;
 		
 		System.out.print("Choose your starter Monster (1,2 or 3)"+"\n");
 		RandomisingMonster randomMonster1 = new RandomisingMonster(1);
@@ -63,8 +63,8 @@ public class SetupGame {
 		return playerName;
 	}
 	
-	public int getDays() {
-		return days;
+	public int getMaxDays() {
+		return maxDays;
 	}
 	
 	public Monster getStarter() {
