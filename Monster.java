@@ -22,6 +22,8 @@ public class Monster {
 	private int attack3Upper;
 	private int attack3Lower;
 	
+	private int healAmount;
+	
 	
 	public Monster(String name, boolean faintStatus, String description, int health, int attack1, int attack2, int attack3, int odds1, int odds2, int odds3, int health_upper, int health_lower, int att1_upper, int att1_lower, int att2_upper, int att2_lower, int att3_upper, int att3_lower) {
 		this.name = name;
@@ -67,22 +69,34 @@ public class Monster {
 		return description;
 	}
 	
-	public void updateAttack(int att, int move) {
+	public void updateAttack(int add, int move) {
 		if(move == 1) {
-			this.attack1 = att;
+			this.attack1 += add;
+			if(this.attack1 > this.attack1Upper) {
+				this.attack1 = this.attack1Upper;
+			}
 		}
 		if(move == 2) {
-			this.attack2 = att;
+			this.attack2 += add;
+			if(this.attack2 > this.attack2Upper) {
+				this.attack2 = this.attack2Upper;
+			}
 		} 
 		if(move == 3) {
-			this.attack3 = att;
+			this.attack3 += add;
+			if(this.attack3 > this.attack3Upper) {
+				this.attack3 = this.attack3Upper;
+			}
 		}
 	}
 	
-	public void updateHealth(int attackMinus) {
-		this.health = this.health - attackMinus;
+	public void updateHealth(int add) {
+		this.health = this.health + add;
 		if(this.health <= 0) {
 			this.health = 0;
+		}
+		if(this.health > this.healthUpper) {
+			this.health = this.healthUpper;
 		}
 	}
 	

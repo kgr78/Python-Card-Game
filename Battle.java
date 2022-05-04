@@ -18,7 +18,7 @@ public class Battle {
 		int a = selectAttack(mon1);	
 		boolean hit = mon1.attackHit(a);
 		if(hit == true) {
-			mon2.updateHealth(mon1.getAttack(a));
+			mon2.updateHealth(-mon1.getAttack(a));
 			System.out.println("Your attack landed");
 			System.out.println("Current Health: Enemy "+mon2.getName()+" "+mon2.getHealth());
 		} else {
@@ -31,7 +31,7 @@ public class Battle {
 		int a = selectMoveBot(mon1);	
 		boolean hit = mon1.attackHit(a);
 		if(hit == true) {
-			mon2.updateHealth(mon1.getAttack(a));
+			mon2.updateHealth(- mon1.getAttack(a));
 			System.out.println("Enemy attack landed");
 			System.out.println("Current Health: "+mon2.getName()+" "+mon2.getHealth());
 		} else {

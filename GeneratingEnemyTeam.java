@@ -66,7 +66,7 @@ public class GeneratingEnemyTeam {
 	}
 	
 	public static void main(String[] args) {
-		GeneratingEnemyTeam g = new GeneratingEnemyTeam(6);
+		GeneratingEnemyTeam g = new GeneratingEnemyTeam();
 		g.createEnemyTeam(6);
 		System.out.println(g.getEnemyTeam());
 	}

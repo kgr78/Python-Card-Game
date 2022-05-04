@@ -7,13 +7,23 @@ public class GameEnvironment {
 	private ArrayList<Monster> enemyTeamOne = new ArrayList<Monster>();
 	private ArrayList<Monster> enemyTeamTwo = new ArrayList<Monster>();
 	private ArrayList<Monster> enemyTeamThree = new ArrayList<Monster>();
+	private ArrayList<Integer> validBattles = new ArrayList<Integer>();
 	
-	private int daysRemaining;
 	private int gold;
 	private int day = 1;
 	
 	
 	public GameEnvironment() {
+	}
+	public ArrayList<Integer> getValidBattles() {
+		return validBattles;
+	}
+	public void resetValidBattles() {
+		int i = 1;
+		while(i < 4) {
+			getValidBattles().add(i);
+			i = i + 1;
+		}
 	}
 	public int getDay() {
 		return day;
@@ -117,23 +127,65 @@ public class GameEnvironment {
 	public void createBattle() {
 		levelGeneration();
 		Scanner sc = new Scanner(System.in);
-		System.out.println("BATTLE 1: Enemy Team"+"\n"+getEnemyTeamOne());
-		System.out.println("BATTLE 2: Enemy Team"+"\n"+getEnemyTeamTwo());
-		System.out.println("BATTLE 3: Enemy Team"+"\n"+getEnemyTeamThree());
+		String bat1 = "";
+		String bat2 = "";
+		String bat3 = "";
+		if(getValidBattles().contains(1) == true) {
+			System.out.println("BATTLE 1: Enemy Team"+"\n"+getEnemyTeamOne());
+			bat1 = "1, ";
+		}
+		if(getValidBattles().contains(2) == true) {
+			System.out.println("BATTLE 2: Enemy Team"+"\n"+getEnemyTeamTwo());
+			bat2 = "2, ";
+		}
+		if(getValidBattles().contains(3) == true) {
+			System.out.println("BATTLE 3: Enemy Team"+"\n"+getEnemyTeamThree());
+			bat3 = "3, ";
+		}
 		System.out.println("Select 4 to skip to the next day");
-		System.out.println("Select Battle: (1,2,3,4)");
+		System.out.println("Select Battle: ("+bat1+bat2+bat3+"or skip 4)");
 		int chosenBattle = sc.nextInt();
 		if (chosenBattle == 1) {
+			getValidBattles().remove(chosenBattle);
 			Battle bat = new Battle(getYourTeam(), getEnemyTeamOne());
-			bat.fullBattle();
+			System.out.println(bat.fullBattle());
 		} else if (chosenBattle == 2) {
+			getValidBattles().remove(chosenBattle);
 			Battle bat = new Battle(getYourTeam(), getEnemyTeamTwo());
-			bat.fullBattle();
+			System.out.println(bat.fullBattle());
 		} else if (chosenBattle == 3) {
+			getValidBattles().remove(chosenBattle);
 			Battle bat = new Battle(getYourTeam(), getEnemyTeamThree());
-			bat.fullBattle();
+			System.out.println(bat.fullBattle());
 		} else {
 			increaseDay();
+		}
+	}
+	
+	public void RanEvent() {
+		RandomEvent random = new RandomEvent(getYourTeam().size());
+		Random x = new Random();
+		boolean leaves = random.MonsterLeaves();
+		boolean levels = random.MonsterLevels();
+		boolean joins = random.MonsterJoins();
+		
+		if(leaves == true) {
+			int chosenMonster = x.nextInt(0,getYourTeam().size());
+			System.out.println("Your Monster "+getYourTeam().get(chosenMonster).getName()+" has gone wild and left your team.");
+			getYourTeam().remove(chosenMonster);
+		}
+		if(levels == true) {
+			 int chosenMonster = x.nextInt(0,getYourTeam().size());
+			System.out.println("Your Monster "+getYourTeam().get(chosenMonster).getName()+" has levelled up!");
+			 getYourTeam().get(chosenMonster).updateHealth(10);
+			 getYourTeam().get(chosenMonster).updateAttack(5, 1);
+			 getYourTeam().get(chosenMonster).updateAttack(5, 2);
+			 getYourTeam().get(chosenMonster).updateAttack(5, 3);
+		}
+		if(joins == true) {
+			RandomisingMonster randomMonster = new RandomisingMonster(1); 
+			addToTeam(randomMonster.getMonster());
+			System.out.println("A new Monster overnight has joined your team! Its name is "+ randomMonster.getMonster().getName());
 		}
 	}
 	
@@ -147,9 +199,20 @@ public class GameEnvironment {
 		Monster starter = set.getStarter();
 		game.addToTeam(starter);
 		int difficulty = set.getDifficulty();
-		/*while (game.getDay() != maxDays) {
-			game.createBattle();
-		}*/
-		game.createBattle();
+		while (game.getDay() < maxDays + 1) {
+			System.out.println("Day: "+Integer.toString(game.getDay())+"/"+Integer.toString(maxDays)+"\n");
+			int currentDay = game.getDay();
+			game.resetValidBattles();
+			game.RanEvent();
+			while(currentDay == game.getDay() && game.getValidBattles().size() != 0) {
+				System.out.println("Your Current Team");
+				int var = 1;
+				for(Monster mon : game.getYourTeam()) {
+					System.out.println(Integer.toString(var)+":"+"\n"+mon);
+					var += 1;	
+				}
+				game.createBattle();
+			}
+		}
 	}
 }

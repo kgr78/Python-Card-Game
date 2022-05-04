@@ -8,16 +8,16 @@ public class RandomisingMonster {
 	private int minusHealthUpper = 0;
 	
 	public RandomisingMonster(int i) {
-		/*Random x = new Random();
-		int mon = x.nextInt(1,7);*/	
+		Random x = new Random();
+		int mon = x.nextInt(1,5);	
 		if(i == 1) {
-			this.minusHealthUpper = 40;
+			this.minusHealthUpper = 70;
 			this.minusAttackUpper = 20;
 			createsMonster(1);
 		} else if (i == 2) {
 			this.plusHealthLower = 20;
 			this.plusAttackLower = 10;
-			this.minusHealthUpper = 20;
+			this.minusHealthUpper = 30;
 			this.minusAttackUpper = 10;
 			createsMonster(1);
 		} else {
@@ -31,6 +31,14 @@ public class RandomisingMonster {
 		if(i==1) {
 			Monster t = new Noah(100,20,30,50);
 			this.monster = randomizesStats(i, t.getHealthUpper(), t.getHealthLower(), t.getatt1Upper(), t.getatt1Lower(), t.getatt2Upper(), t.getatt2Lower(), t.getatt3Upper(), t.getatt3Lower(), this.plusAttackLower, this.minusAttackUpper, this.plusHealthLower, this.minusHealthUpper); /*Not sure if this. is good code*/
+		} else if(i==2) {
+			Monster t = new Charlie(130,20,35,60);
+		} else if (i==3){
+			Monster t = new Ben(100,5,55,155);
+		} else if (i==4) {
+			Monster t = new Daniel(80, 25, 35, 75);
+		} else {
+			Monster t = new Hugo(200, 3, 6, 15);
 		}
 	}
 	
