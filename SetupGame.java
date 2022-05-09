@@ -8,6 +8,10 @@ public class SetupGame {
 	private Monster starter;
 	private int difficulty;
 	
+	/**Setup class Constructor
+	 *
+	 * Initializes the player name, maximum number of days, player's starter Monster and difficult all chosen by the player.
+	*/
 	public SetupGame() {
 		Scanner sc = new Scanner(System.in); 
 		System.out.println("Write your player name: "); /*Must be length 3-15, no numbers or special characters*/
@@ -59,25 +63,31 @@ public class SetupGame {
 		difficulty = diff;
 	}
 	
+	/**Returns the player's name as a string*/
 	public String getPlayerName() {
 		return playerName;
 	}
 	
+	/**Returns the maximum number of days as a integer*/
 	public int getMaxDays() {
 		return maxDays;
 	}
 	
+	/**Returns the player's starter Monster*/
 	public Monster getStarter() {
 		return starter;
 	}
 	
+	/**Returns the difficulty as an integer*/ 
 	public int getDifficulty() {
 		return difficulty;
 	}
 	
+	/**Sets the parameter Monster as the player's starter Monster*/
 	public void setStarter(Monster mon) {
 		this.starter = mon;
 	}
+	
 	public static void main(String[] args) {
 		SetupGame setup = new SetupGame();
 	}

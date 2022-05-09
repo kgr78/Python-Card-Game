@@ -24,7 +24,10 @@ public class Monster {
 	
 	private int healAmount;
 	
-	
+	/**Monster class constructor.
+	 * 
+	 * Initializes its name, faintStatus, description, health, attack1, attack2, attack3, attack odds, upper and lower health range and upper and lower attack ranges
+	*/
 	public Monster(String name, boolean faintStatus, String description, int health, int attack1, int attack2, int attack3, int odds1, int odds2, int odds3, int health_upper, int health_lower, int att1_upper, int att1_lower, int att2_upper, int att2_lower, int att3_upper, int att3_lower) {
 		this.name = name;
 		this.health = health;
@@ -48,27 +51,37 @@ public class Monster {
 		this.attack3Lower = att3_lower;
 	}
 	
+	/**Returns the name of the Monster*/
 	public String getName() {
 		return name;
 	}
 	
+	/**Returns the heal amount of the Monster*/
+	public int getHealAmount() {
+		return this.healAmount;
+	}
+	
+	/**Returns the health of the Monster*/
 	public int getHealth() {
 		return health;
 	}
 	
+	/**Returns the faint status of the Monster*/
 	public boolean getfaintStatus() {
 		return faintStatus;
 	}
 	
+	/**Sets the faint status of the Monster to a boolean*/
 	public void setfaintStatus(boolean bool) {
 		faintStatus = bool;
 	}
 	
-	
+	/**Returns the Monster description*/
 	public String getDescription() {
 		return description;
 	}
 	
+	/**Given an integer parameter for the amount to be added and another integer for the given attack move (1 - 3), updates the chosen attack move by the amount specified*/
 	public void updateAttack(int add, int move) {
 		if(move == 1) {
 			this.attack1 += add;
@@ -90,6 +103,7 @@ public class Monster {
 		}
 	}
 	
+	/**Adds the integer parameter to the Monsters health*/
 	public void updateHealth(int add) {
 		this.health = this.health + add;
 		if(this.health <= 0) {
@@ -100,6 +114,12 @@ public class Monster {
 		}
 	}
 	
+	/**Returns a boolean value to determine whether a Monster's attack is successful
+	 * 
+	 * Result is randomly generated due to the attack odds of a Monster's given attack.
+	 * 
+	 * The integer parameter is the chosen attack move of the Monster.
+	*/
 	public boolean attackHit(int i) {
 		int odds = getOdds(i);
 		Random x = new Random();
@@ -111,6 +131,7 @@ public class Monster {
 		}	
 	}
 	
+	/**Given a integer parameter, returns the corresponding Monster attack move odds as an integer out of 100*/
 	public int getOdds(int i) {
 		if(i==1) {
 			return this.attackOdds1;
@@ -123,6 +144,7 @@ public class Monster {
 		}
 	}
 	
+	/**Given an integer parameter (1 - 3), returns the corresponding attack move of the Monster*/
 	public int getAttack(int i) {
 		if(i==1) {
 			return this.attack1;
@@ -135,50 +157,62 @@ public class Monster {
 		}
 	}
 	
+	/**Returns the upper health bound of Monster*/
 	public int getHealthUpper() {
 		return healthUpper;
 	}
 	
+	/**Returns the lower health bound of Monster*/
 	public int getHealthLower() {
 		return healthLower;
 	}
 	
+	/**Returns the upper attack 1 bound of the Monster*/
 	public int getatt1Upper() {
 		return attack1Upper;
 	}
 	
+	/**Returns the lower attack 1 bound of the Monster*/
 	public int getatt1Lower() {
 		return attack1Lower;
 	}
 	
+	/**Returns the upper attack 2 bound of Monster*/
 	public int getatt2Upper() {
 		return attack2Upper;
 	}
 	
+	/**Returns the lower attack 2 bound of Monster*/
 	public int getatt2Lower() {
 		return attack2Lower;
 	}
 	
+	/**Returns the upper attack 3 bound of Monster*/
 	public int getatt3Upper() {
 		return attack3Upper;
 	}
 	
+	/**Returns the lower attack 3 bound of Monster*/
 	public int getatt3Lower() {
 		return attack3Lower;
 	}
 	
+	/**Returns the odds of the Monsters attack 1*/
 	public int getAttackOdds1() {
 		return attackOdds1;
 	}
 	
+	/**Returns the odds of the Monsters attack 2*/
 	public int getAttackOdds2() {
 		return attackOdds2;
 	}
 	
+	/**Returns the odds of the Monsters attack 3*/
 	public int getAttackOdds3() {
 		return attackOdds3;
 	}
 	
+	/**Returns the Monster in a string representation*/
 	public String toString() {
 		String name = "Name: "+getName()+"\n";
 		String health = "Health: "+getHealth()+"\n";

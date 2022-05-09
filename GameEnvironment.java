@@ -8,16 +8,21 @@ public class GameEnvironment {
 	private ArrayList<Monster> enemyTeamTwo = new ArrayList<Monster>();
 	private ArrayList<Monster> enemyTeamThree = new ArrayList<Monster>();
 	private ArrayList<Integer> validBattles = new ArrayList<Integer>();
-	
 	private int gold;
 	private int day = 1;
 	
 	
 	public GameEnvironment() {
 	}
+	
+	/**Returns the valid battles the player can choose from*/
 	public ArrayList<Integer> getValidBattles() {
 		return validBattles;
 	}
+	
+	/**Resets the valid battles the player can choose from.
+	 * 
+	 * Resets the validBattles ArrayList to [1,2,3]*/
 	public void resetValidBattles() {
 		int i = 1;
 		while(i < 4) {
@@ -25,41 +30,65 @@ public class GameEnvironment {
 			i = i + 1;
 		}
 	}
+	
+	/**Returns the current day.*/
 	public int getDay() {
 		return day;
 	}
+	
+	/**Increases the current day by one.*/
 	public void increaseDay() {
 		this.day += 1;
 	}
+	
+	/**Returns your monster team ArrayList.*/
 	public ArrayList<Monster> getYourTeam() {
 		return yourTeam;
 	}
+	
+	/**Adds the given Monster parameter to your Team ArrayList.*/
 	public void addToTeam(Monster mon) {
 		getYourTeam().add(mon);
 	}
+	
+	/**Returns the first enemy team.*/
 	public ArrayList<Monster> getEnemyTeamOne() {
 		return enemyTeamOne;
 	}
+	
+	/**Returns the second enemy team*/
 	public ArrayList<Monster> getEnemyTeamTwo() {
 		return enemyTeamTwo;
 	}
+	
+	/**Returns the third enemy team*/
 	public ArrayList<Monster> getEnemyTeamThree() {
 		return enemyTeamThree;
 	}
+	
+	/**Sets the first enemy team to the given parameter of an ArrayList<Monster>*/
 	public void setEnemyTeamOne(ArrayList<Monster> enemyTeam) {
 		this.enemyTeamOne = enemyTeam;
 	}
+	
+	/**Sets the second enemy team to the given parameter of an ArrayList<Monster>*/
 	public void setEnemyTeamTwo(ArrayList<Monster> enemyTeam) {
 		this.enemyTeamTwo = enemyTeam;
 	}
+	
+	/**Sets the third enemy team to the given parameter of an ArrayList<Monster>*/
 	public void setEnemyTeamThree(ArrayList<Monster> enemyTeam) {
 		this.enemyTeamThree = enemyTeam;
 	}
+	
+	/**Resets all enemy teams by having all team ArrayList being empty*/
 	public void resetEnemyTeams() {
 		getEnemyTeamOne().clear();
 		getEnemyTeamTwo().clear();
 		getEnemyTeamThree().clear();
 	}
+	
+	/**Generates the three enemy teams dependent on the day*/
 	public void levelGeneration() {
 		if(getDay() > 0 && getDay() < 3) {
 			GeneratingEnemyTeam teamOne = new GeneratingEnemyTeam();
@@ -124,6 +153,12 @@ public class GameEnvironment {
 		}
 	}
 
+	/**First allows the user to select a given valid battle by integer or iterate to the next day
+	 * 
+	 * If a battle is chosen, calls Battle class to generate a battle. 
+	 * 
+	 * If user selects to skip the day, the day counter increases by one.
+	 */
 	public void createBattle() {
 		levelGeneration();
 		Scanner sc = new Scanner(System.in);
@@ -146,15 +181,15 @@ public class GameEnvironment {
 		System.out.println("Select Battle: ("+bat1+bat2+bat3+"or skip 4)");
 		int chosenBattle = sc.nextInt();
 		if (chosenBattle == 1) {
-			getValidBattles().remove(chosenBattle);
+			getValidBattles().remove(Integer.valueOf(chosenBattle));
 			Battle bat = new Battle(getYourTeam(), getEnemyTeamOne());
 			System.out.println(bat.fullBattle());
 		} else if (chosenBattle == 2) {
-			getValidBattles().remove(chosenBattle);
+			getValidBattles().remove(Integer.valueOf(chosenBattle));
 			Battle bat = new Battle(getYourTeam(), getEnemyTeamTwo());
 			System.out.println(bat.fullBattle());
 		} else if (chosenBattle == 3) {
-			getValidBattles().remove(chosenBattle);
+			getValidBattles().remove(Integer.valueOf(chosenBattle));
 			Battle bat = new Battle(getYourTeam(), getEnemyTeamThree());
 			System.out.println(bat.fullBattle());
 		} else {
@@ -162,6 +197,14 @@ public class GameEnvironment {
 		}
 	}
 	
+	/**Generates three independent random events.
+	 * 
+	 * First random event is that a monster in your team leaves by being removed in your team ArrayList.
+	 * Second random event is that a monster in your team levels up by its stats increases.
+	 * Third random event is that a randomly generated monster is added to your team. 
+	 * 
+	 * Method uses the RandomEvent class to determine whether these events are triggered.
+	 */
 	public void RanEvent() {
 		RandomEvent random = new RandomEvent(getYourTeam().size());
 		Random x = new Random();
@@ -190,7 +233,7 @@ public class GameEnvironment {
 	}
 	
 	
-	
+	/**The GameEnvironment main function*/
 	public static void main(String[] args) {
 		GameEnvironment game = new GameEnvironment();
 		SetupGame set = new SetupGame();
@@ -204,6 +247,7 @@ public class GameEnvironment {
 			int currentDay = game.getDay();
 			game.resetValidBattles();
 			game.RanEvent();
+			
 			while(currentDay == game.getDay() && game.getValidBattles().size() != 0) {
 				System.out.println("Your Current Team");
 				int var = 1;
