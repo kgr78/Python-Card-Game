@@ -88,7 +88,7 @@ public class RandomisingMonster {
 	public static void main(String[] args) {
 		RandomisingMonster randomMonster = new RandomisingMonster(1);
 		System.out.println(randomMonster.getMonster());
-		System.out.println(randomMonster.getMonster().getHealth());
+		System.out.println(randomMonster.getMonster().getCurrentHealth());
 		System.out.println(randomMonster.getMonster().getAttack(1));
 		System.out.println(randomMonster.getMonster().getAttack(2));
 		System.out.println(randomMonster.getMonster().getAttack(3));

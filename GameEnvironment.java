@@ -8,6 +8,8 @@ public class GameEnvironment {
 	private ArrayList<Monster> enemyTeamTwo = new ArrayList<Monster>();
 	private ArrayList<Monster> enemyTeamThree = new ArrayList<Monster>();
 	private ArrayList<Integer> validBattles = new ArrayList<Integer>();
+	private int difficulty;
+	private int points;
 	private int gold;
 	private int day = 1;
 	
@@ -29,6 +31,66 @@ public class GameEnvironment {
 			getValidBattles().add(i);
 			i = i + 1;
 		}
+	}
+	
+	/**Returns the game difficulty represented as an integer
+	 *
+	 *(1) Represents Moderate difficulty, (2) Represents Hard difficulty;
+	*/
+	public int getDifficulty() {
+		return difficulty;
+	}
+	
+	/**Adds gold dependent on the player battle and whether the player won*/
+	public void addGoldFromBattle(int difficulty, int chosenBattle, boolean outcome) {
+		Random ran = new Random();
+		int goldAdded = 0;
+		if(chosenBattle == 1 && outcome == true) {
+			goldAdded = ran.nextInt(50, 100);
+		} else if(chosenBattle == 2 && outcome == true) {
+			goldAdded = ran.nextInt(70, 150);
+		} else if(chosenBattle == 3 && outcome == true) {
+			goldAdded = ran.nextInt(80, 200);
+		}
+		if(difficulty == 2) {
+			addGold(goldAdded - 40);
+		} else {
+			addGold(goldAdded);
+		}
+	}
+	
+	/**Adds gold dependent on the player battle and whether the player won*/
+	public void addPointsFromBattle(int difficulty, int chosenBattle, boolean outcome) {
+		Random ran = new Random();
+		int pointsAdded = 0;
+		if(chosenBattle == 1 && outcome == true) {
+			pointsAdded = ran.nextInt(50, 100);
+		} else if(chosenBattle == 2 && outcome == true) {
+			pointsAdded = ran.nextInt(70, 150);
+		} else if(chosenBattle == 3 && outcome == true) {
+			pointsAdded = ran.nextInt(80, 200);
+		}
+		addPoints(pointsAdded);
+	}
+	
+	/**Adds a given integer amount specified in the parameter to the points variable*/ 
+	public void addPoints(int amount) {
+		points += amount;
+	}
+	
+	/**Return the player's points*/
+	public int getPoints() {
+		return points;
+	}
+	
+	/**Adds a given integer amount specified in the parameter to the gold variable*/
+	public void addGold(int amount) {
+		gold += amount;
+	}
+	
+	/**Returns the player's gold amount*/
+	public int getGold() {
+		return gold;
 	}
 	
 	/**Returns the current day.*/
@@ -165,6 +227,8 @@ public class GameEnvironment {
 		String bat1 = "";
 		String bat2 = "";
 		String bat3 = "";
+		boolean outcome = false;
+		
 		if(getValidBattles().contains(1) == true) {
 			System.out.println("BATTLE 1: Enemy Team"+"\n"+getEnemyTeamOne());
 			bat1 = "1, ";
@@ -184,16 +248,26 @@ public class GameEnvironment {
 			getValidBattles().remove(Integer.valueOf(chosenBattle));
 			Battle bat = new Battle(getYourTeam(), getEnemyTeamOne());
 			System.out.println(bat.fullBattle());
+			outcome = bat.getOutcome();
 		} else if (chosenBattle == 2) {
 			getValidBattles().remove(Integer.valueOf(chosenBattle));
 			Battle bat = new Battle(getYourTeam(), getEnemyTeamTwo());
 			System.out.println(bat.fullBattle());
+			outcome = bat.getOutcome();
 		} else if (chosenBattle == 3) {
 			getValidBattles().remove(Integer.valueOf(chosenBattle));
 			Battle bat = new Battle(getYourTeam(), getEnemyTeamThree());
 			System.out.println(bat.fullBattle());
+			outcome = bat.getOutcome();
 		} else {
 			increaseDay();
+		}
+		addPointsFromBattle(getDifficulty(), chosenBattle, outcome);
+		addGoldFromBattle(getDifficulty(), chosenBattle, outcome);
+		if(outcome == true) {
+			for(Monster mon: getYourTeam()) {
+				mon.levelUp();
+			}
 		}
 	}
 	
@@ -220,7 +294,7 @@ public class GameEnvironment {
 		if(levels == true) {
 			 int chosenMonster = x.nextInt(0,getYourTeam().size());
 			System.out.println("Your Monster "+getYourTeam().get(chosenMonster).getName()+" has levelled up!");
-			 getYourTeam().get(chosenMonster).updateHealth(10);
+			 getYourTeam().get(chosenMonster).updateCurrentHealth(10);
 			 getYourTeam().get(chosenMonster).updateAttack(5, 1);
 			 getYourTeam().get(chosenMonster).updateAttack(5, 2);
 			 getYourTeam().get(chosenMonster).updateAttack(5, 3);
@@ -241,14 +315,19 @@ public class GameEnvironment {
 		int maxDays = set.getMaxDays();
 		Monster starter = set.getStarter();
 		game.addToTeam(starter);
-		int difficulty = set.getDifficulty();
+		game.difficulty = set.getDifficulty();
 		while (game.getDay() < maxDays + 1) {
-			System.out.println("Day: "+Integer.toString(game.getDay())+"/"+Integer.toString(maxDays)+"\n");
+			System.out.println("Current Day: "+Integer.toString(game.getDay()));
+			System.out.println("Days Remaining: "+Integer.toString(maxDays - game.getDay()));
+			
 			int currentDay = game.getDay();
 			game.resetValidBattles();
 			game.RanEvent();
 			
 			while(currentDay == game.getDay() && game.getValidBattles().size() != 0) {
+				System.out.println("Gold: "+game.getGold()+"\n");
+				System.out.println("Points: "+game.getPoints()+"\n");
+				
 				System.out.println("Your Current Team");
 				int var = 1;
 				for(Monster mon : game.getYourTeam()) {
@@ -256,6 +335,10 @@ public class GameEnvironment {
 					var += 1;	
 				}
 				game.createBattle();
+			}
+			
+			for(Monster mon: game.getYourTeam()) {
+				mon.updateCurrentHealth(mon.getHealAmount());
 			}
 		}
 	}

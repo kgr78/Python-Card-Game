@@ -9,6 +9,8 @@ public class Battle {
 	private ArrayList<Monster> yourCopyTeam = new ArrayList<Monster>();
 	private ArrayList<Monster> enemyCopyTeam = new ArrayList<Monster>();
 	
+	private boolean outcome;
+	
 	/**Battle class constructor
 	 * 
 	 * Initializes your team of Monsters ArrayList and the enemy team of Monsters ArrayList
@@ -26,12 +28,12 @@ public class Battle {
 		int a = selectAttack(mon1);	
 		boolean hit = mon1.attackHit(a);
 		if(hit == true) {
-			mon2.updateHealth(-mon1.getAttack(a));
+			mon2.updateCurrentHealth(-mon1.getAttack(a));
 			System.out.println("Your attack landed");
-			System.out.println("Current Health: Enemy "+mon2.getName()+" "+mon2.getHealth());
+			System.out.println("Current Health: Enemy "+mon2.getName()+" "+mon2.getCurrentHealth());
 		} else {
 			System.out.println("Your attack missed");
-			System.out.println("Current Health: Enemy "+mon2.getName()+" "+mon2.getHealth());
+			System.out.println("Current Health: Enemy "+mon2.getName()+" "+mon2.getCurrentHealth());
 		}
 	}
 	
@@ -43,12 +45,12 @@ public class Battle {
 		int a = selectMoveBot();	
 		boolean hit = mon1.attackHit(a);
 		if(hit == true) {
-			mon2.updateHealth(- mon1.getAttack(a));
+			mon2.updateCurrentHealth(- mon1.getAttack(a));
 			System.out.println("Enemy attack landed");
-			System.out.println("Current Health: "+mon2.getName()+" "+mon2.getHealth());
+			System.out.println("Current Health: "+mon2.getName()+" "+mon2.getCurrentHealth());
 		} else {
 			System.out.println("Enemy attack missed");
-			System.out.println("Current Health: "+mon2.getName()+" "+mon2.getHealth());
+			System.out.println("Current Health: "+mon2.getName()+" "+mon2.getCurrentHealth());
 		}
 	}
 	
@@ -131,18 +133,19 @@ public class Battle {
 		Monster mon2 = selectBotMonster(enemyTeam.size());
 		Monster mon1 = selectMonster(playerTeam);
 		while(yourCopyTeam.size() != playerTeam.size() && enemyCopyTeam.size() != enemyTeam.size()) {
-			System.out.println("Current Health: "+mon1.getName()+" "+mon1.getHealth());
-			System.out.println("Current Health: Enemy "+mon2.getName()+" "+mon2.getHealth());
+			System.out.println("Current Health: "+mon1.getName()+" "+mon1.getCurrentHealth());
+			System.out.println("Current Health: Enemy "+mon2.getName()+" "+mon2.getCurrentHealth());
 			
 			if(canAttack == true) {
 				this.attack(mon1, mon2);
 			}
-			if(mon2.getHealth() == 0) {
+			if(mon2.getCurrentHealth() == 0) {
 				System.out.println("Enemy "+mon2.getName()+" has fainted");
 				mon2.setfaintStatus(true);
 				enemyCopyTeam.add(mon2);
 				if(enemyCopyTeam.size() == enemyTeam.size()) {
-					result = "You won!";
+					outcome = true;
+					result = "You won!"+"\n";
 					return result;
 				}
 				mon2 = selectBotMonster(enemyTeam.size());
@@ -150,12 +153,13 @@ public class Battle {
 			
 			
 			this.attackBot(mon2,mon1);
-			if(mon1.getHealth() == 0) {
+			if(mon1.getCurrentHealth() == 0) {
 				System.out.println("Your "+mon1.getName()+" has fainted");
 				mon1.setfaintStatus(true);
 				yourCopyTeam.add(mon1);
 				if(yourCopyTeam.size() == playerTeam.size()) {
-					result = "You lost!";
+					outcome = false;
+					result = "You lost!"+"\n";
 					return result;
 				}
 				mon1 = selectMonster(playerTeam);
@@ -175,6 +179,10 @@ public class Battle {
 		}
 		return result;
 	}	
+	
+	public boolean getOutcome() {
+		return outcome;
+	}
 	
 	public static void main(String[] args) {
 		ArrayList<Monster> playerTeam = new ArrayList<Monster>();

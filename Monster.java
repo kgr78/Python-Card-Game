@@ -2,7 +2,8 @@ import java.util.Random;
 
 public class Monster {
 	private String name;
-	private int health;
+	private int currentHealth;
+	private int maxHealth;
 	private boolean faintStatus;
 	private String description;
 	
@@ -28,9 +29,10 @@ public class Monster {
 	 * 
 	 * Initializes its name, faintStatus, description, health, attack1, attack2, attack3, attack odds, upper and lower health range and upper and lower attack ranges
 	*/
-	public Monster(String name, boolean faintStatus, String description, int health, int attack1, int attack2, int attack3, int odds1, int odds2, int odds3, int health_upper, int health_lower, int att1_upper, int att1_lower, int att2_upper, int att2_lower, int att3_upper, int att3_lower) {
+	public Monster(String name, boolean faintStatus, String description, int health, int attack1, int attack2, int attack3, int odds1, int odds2, int odds3, int health_upper, int health_lower, int att1_upper, int att1_lower, int att2_upper, int att2_lower, int att3_upper, int att3_lower, int healAmount) {
 		this.name = name;
-		this.health = health;
+		this.currentHealth = health;
+		this.maxHealth = health;
 		this.faintStatus = faintStatus;
 		this.description = description;
 		
@@ -49,6 +51,13 @@ public class Monster {
 		this.attack2Lower = att2_lower;
 		this.attack3Upper = att3_upper;
 		this.attack3Lower = att3_lower;
+		
+		this.healAmount = healAmount;
+	}
+	
+	/**Sets the name of the Monster*/ 
+	public void setName(String newName) {
+		name = newName;
 	}
 	
 	/**Returns the name of the Monster*/
@@ -56,14 +65,34 @@ public class Monster {
 		return name;
 	}
 	
-	/**Returns the heal amount of the Monster*/
-	public int getHealAmount() {
-		return this.healAmount;
+	/**Adds the integer parameter to the Monster's max health
+	 *
+	 * If max health plus the parameter is greater than the health upper, max health set to health upper.
+	*/
+	public void updateMaxHealth(int add) {
+		this.maxHealth += add;
+		if(this.maxHealth > this.healthUpper) {
+			this.maxHealth = this.healthUpper;
+		}
 	}
 	
+	/**Adds the integer parameter to the Monster's current health
+	 *
+	 * If current health plus the parameter is greater than the max health, current health set to max health.
+	*/
+	public void updateCurrentHealth(int add) {
+		this.currentHealth += add;
+		if(this.currentHealth <= 0) {
+			this.currentHealth = 0;
+		}
+		if(this.currentHealth > this.maxHealth) {
+			this.currentHealth = this.maxHealth;
+		}
+	} 
+	
 	/**Returns the health of the Monster*/
-	public int getHealth() {
-		return health;
+	public int getCurrentHealth() {
+		return currentHealth;
 	}
 	
 	/**Returns the faint status of the Monster*/
@@ -80,6 +109,23 @@ public class Monster {
 	public String getDescription() {
 		return description;
 	}
+	
+	/**Adds a given integer parameter amount to the heal amount
+	 *
+	 * If heal amount plus the added parameter is more than the health upper, heal amount is set to the health upper
+	*/
+	public void addHealAmount(int amount) {
+		healAmount += amount;
+		if(healAmount > healthUpper) {
+			healAmount = healthUpper;
+		}
+	}
+	
+	/**Returns the heal amount of the Monster*/
+	public int getHealAmount() {
+		return this.healAmount;
+	}
+	
 	
 	/**Given an integer parameter for the amount to be added and another integer for the given attack move (1 - 3), updates the chosen attack move by the amount specified*/
 	public void updateAttack(int add, int move) {
@@ -100,17 +146,6 @@ public class Monster {
 			if(this.attack3 > this.attack3Upper) {
 				this.attack3 = this.attack3Upper;
 			}
-		}
-	}
-	
-	/**Adds the integer parameter to the Monsters health*/
-	public void updateHealth(int add) {
-		this.health = this.health + add;
-		if(this.health <= 0) {
-			this.health = 0;
-		}
-		if(this.health > this.healthUpper) {
-			this.health = this.healthUpper;
 		}
 	}
 	
@@ -212,13 +247,25 @@ public class Monster {
 		return attackOdds3;
 	}
 	
+	/**Levels up the Monster by increasing its max health, attack1 damage, attack2 damage, attack3 damage and heal amount*/
+	public void levelUp() {
+		System.out.println("Your Monster "+getName()+" level up!");
+		Random ran1 = new Random();
+		updateAttack(ran1.nextInt(1,3), 1);
+		updateAttack(ran1.nextInt(1,3), 2);
+		updateAttack(ran1.nextInt(1,3), 3);
+		updateMaxHealth(ran1.nextInt(5,11));
+		addHealAmount(ran1.nextInt(5,11));
+	}
+	
 	/**Returns the Monster in a string representation*/
 	public String toString() {
 		String name = "Name: "+getName()+"\n";
-		String health = "Health: "+getHealth()+"\n";
+		String health = "Health: "+getCurrentHealth()+"\n";
+		String heal = "Heal Amount: "+getHealAmount()+"\n";
 		String attack1 = "Attack1: "+getAttack(1)+" / Accuracy: "+getAttackOdds1()+"%"+"\n";
 		String attack2 = "Attack1: "+getAttack(2)+" / Accuracy: "+getAttackOdds2()+"%"+"\n";
 		String attack3 = "Attack1: "+getAttack(3)+" / Accuracy: "+getAttackOdds3()+"%"+"\n";
-		return name+health+attack1+attack2+attack3;
+		return name+health+heal+attack1+attack2+attack3;
 	}
 }
