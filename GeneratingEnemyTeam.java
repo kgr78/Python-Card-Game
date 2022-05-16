@@ -5,7 +5,6 @@ import javax.security.auth.x500.X500Principal;
 
 public class GeneratingEnemyTeam {
 	private ArrayList<Monster> enemyTeam = new ArrayList<Monster>();
-	/*(1) Easy Monster (2) Medium Monster (3) Hard Monster (0) No Monster*/
 	private String[] tooEasy = {"100","110"};
 	private String[] easy = {"120","111"};
 	private String[] medium = {"220","300","211"};
@@ -17,17 +16,16 @@ public class GeneratingEnemyTeam {
 	public GeneratingEnemyTeam() {
 	}
 	
-	/**Returns the ArrayList of the enemy team*/
+	/*E = Easy Monster, M = Medium Monster, H = Hard Monster*/
+	
 	public ArrayList<Monster> getEnemyTeam() {
 		return this.enemyTeam;
 	}
 	
-	/**Adds monster to the enemy team ArrayList*/ 
 	public void addToEnemyTeam(Monster mon) {
 		enemyTeam.add(mon);
 	}
 	
-	/**Given a number, returns the set of possible battles for a given difficulty*/
 	public String[] getStringList(int i) {
 		if (i == 1) {
 			return tooEasy;
@@ -44,10 +42,6 @@ public class GeneratingEnemyTeam {
 		}
 	}
 	
-	/**Given a number (1 - 6), an enemy team of Monsters is randomly created.
-	 * 
-	 * Ranging from 1 which is creates an easier ArrayList of Monsters to 6 which is the most difficult.
-	*/
 	public void createEnemyTeam(int p) {
 		Random x = new Random();
 		String[] diffList = getStringList(p);
@@ -72,9 +66,6 @@ public class GeneratingEnemyTeam {
 	}
 	
 	public static void main(String[] args) {
-		GeneratingEnemyTeam g = new GeneratingEnemyTeam();
-		g.createEnemyTeam(6);
-		System.out.println(g.getEnemyTeam());
 	}
 }	
 	

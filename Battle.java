@@ -187,10 +187,10 @@ public class Battle {
 	public static void main(String[] args) {
 		ArrayList<Monster> playerTeam = new ArrayList<Monster>();
 		ArrayList<Monster> enemyTeam = new ArrayList<Monster>();
-		Monster noah1 = new Noah(100, 20, 30, 60);
-		Monster noah2 = new Noah(100, 20, 30, 60);
-		Monster charlie1 = new Charlie(90, 25, 40, 70);
-		Monster charlie2 = new Charlie(90, 25, 40, 70);
+		Monster noah1 = new Noah(100, 20, 30, 60, 20);
+		Monster noah2 = new Noah(100, 20, 30, 60, 20);
+		Monster charlie1 = new Charlie(90, 25, 40, 70, 20);
+		Monster charlie2 = new Charlie(90, 25, 40, 70, 20);
 		playerTeam.add(noah1);
 		playerTeam.add(charlie1);
 		enemyTeam.add(noah2);
