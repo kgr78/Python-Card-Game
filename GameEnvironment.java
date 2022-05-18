@@ -255,6 +255,7 @@ public class GameEnvironment {
 	
 	/**Creates 3 random monsters and items with random prices*/
 	public void storeItemsGeneration() {
+		gold = gold + 100; 
 		for (int i = 0; i < 3; i++) 
 	      { 		      
 			RandomisingItems item = new RandomisingItems(1);
@@ -268,40 +269,49 @@ public class GameEnvironment {
 			Monster randMon = mon.getMonster(); 
 			addMonToStore(randMon);	
 		  }
-		/*Displays items and monsters (will be deleted)*/
-		for (int i = 0; i < getStoreItems().size();i++) 
-	      { 		      
-	          System.out.println(getStoreItems().get(i).toString()); 		
-	      } 
-		for (int i = 0; i < getStoreItems().size();i++) 
-	      { 		      
-	          System.out.println(getStoreMon().get(i).storeMonString()); 		
-	      }  
 	}
 	
 	
 	
 	/**Adds Monster from store to inventory and takes cost off gold*/
 	public void chosenMonsterStore(int numMon) {
-		if (yourTeam.size() < 4 ) {
-			addToTeam(getStoreMon().get(numMon)); 
-			gold = gold - getStoreItems().get(numMon).getBuyPrice(); 
-			System.out.println("Item "+numMon+" Added to Inventory");
+		if (yourTeam.size() < 4) {
+			if ((gold - getStoreItems().get(numMon).getBuyPrice()) >= 0) {
+				addToTeam(getStoreMon().get(numMon)); 
+				gold = gold - getStoreItems().get(numMon).getBuyPrice(); 
+				System.out.println("Monster "+(numMon+4)+" Added to Inventory");
+			}
+		}
+		else {
+			System.out.println("To many monsters on team or not enough gold to buy please disgard monster or pick an item");
 		}
 	}
 	
 	/**Adds item from store to inventory and takes cost off gold*/
 	public void chosenItemStore(int numItem) {
 		if (yourItems.size() < 4) {
-			addToItems(getStoreItems().get(numItem)); 
-			gold = gold - getStoreItems().get(numItem).getBuyPrice(); 
-			System.out.println("Item "+(numItem+1)+" Added to Inventory"); 
+			if ((gold - getStoreItems().get(numItem).getBuyPrice()) >= 0) {
+				addToItems(getStoreItems().get(numItem)); 
+				gold = gold - getStoreItems().get(numItem).getBuyPrice(); 
+				System.out.println("Item "+(numItem+1)+" Added to Inventory"); 
+			}
+		}
+		else {
+			System.out.println("To many Items in invetory or not enough gold to buy. Please disgard an item or pick a monster\n");
 		}
 	}
 	/**Creates store and lets person choose items and monsters*/
 	public void createStore() {
 		System.out.println("ITEM STORE FOR ITEMS: \n");
-		storeItemsGeneration(); 
+		System.out.println("Items will be added to invetory and can be used after / before battles \n");
+		for (int i = 0; i < getStoreItems().size();i++) 
+	      { 		      
+	          System.out.println(getStoreItems().get(i).toString()); 		
+	      } 
+		for (int i = 0; i < getStoreMon().size();i++) 
+	      { 		      
+	          System.out.println(getStoreMon().get(i).storeMonString()); 		
+	      } 
 		Scanner sc = new Scanner(System.in);
 		int chosenItem = sc.nextInt();
 		if (chosenItem == 1) {
@@ -312,16 +322,16 @@ public class GameEnvironment {
 			chosenItemStore(2);
 		} 
 		else if (chosenItem == 4){
-			chosenMonsterStore(3); 
+			chosenMonsterStore(0); 
 		}
 		else if (chosenItem == 5) {
-			chosenMonsterStore(4); 
+			chosenMonsterStore(1); 
 		}
 		else if (chosenItem == 6) {
-			chosenMonsterStore(5); 
+			chosenMonsterStore(2); 
 		}
 		else {
-			System.out.println();
+			System.out.println("\n");
 		}
 		
 	}
@@ -343,7 +353,7 @@ public class GameEnvironment {
 	public GettingItems selectItem() {
 		Scanner sc = new Scanner(System.in);
 		GettingItems item; 
-		System.out.println("Select which item to sell: 1 - "+getYourItems().size());
+		System.out.println("Select which item to sell: 0 - "+getYourItems().size());
 		for(GettingItems items : yourItems) {
 			System.out.println(items.toString());
 		}
@@ -353,20 +363,20 @@ public class GameEnvironment {
 	}
 	
 	/**Picks the monsters from players team to use and item on the monster*/
-	public void usingItem(int itm) {
+	public void usingItem() {
 		System.out.println("Pick Monster to Use item on\n");
 		Monster mon = selectMonster(); 
-		GettingItems item = getYourItems().get(itm); 
+		GettingItems item = selectItem(); 
 		item.getFainted(); 
 		if (mon.getfaintStatus() == true && item.getFainted() == false) {
 			mon.setfaintStatus(false);
 			mon.updateCurrentHealth(item.getHealing());
-			getYourItems().remove(itm); 
+			getYourItems().remove(item); 
 			System.out.println("Item removed from use"); 
 		}
 		else if (mon.getfaintStatus() == false){
 			mon.updateCurrentHealth(item.getHealing());
-			getYourItems().remove(itm); 
+			getYourItems().remove(item); 
 			System.out.println("Item removed from use"); 
 		}
 		else {
@@ -378,24 +388,20 @@ public class GameEnvironment {
 	
 	/**Uses items on Monsters and takes out of the inventory*/ 
 	public void useItems() {
-		System.out.println("Pick Item to Use");
-		for (int i = 0; i < getYourItems().size();i++) 
-	      { 		      
-	          System.out.println(getYourItems().get(i)); 		
-	      } 
-		Scanner sc = new Scanner(System.in);
-		int chosenItem = sc.nextInt();
-		if (chosenItem == 1) {
-			usingItem(0);
-		} else if (chosenItem == 2) {
-			usingItem(1);
-		} else if (chosenItem == 3) {
-			usingItem(2);
-		}else if (chosenItem == 4) {
-			usingItem(3);
-		}
-		else {
-			System.out.println();
+		if (getYourItems().size() > 0) {
+			System.out.println("Pick Item to Use");
+			for (int i = 0; i < getYourItems().size();i++) 
+		      { 		      
+		          System.out.println(getYourItems().get(i)); 		
+		      } 
+			Scanner sc = new Scanner(System.in);
+			int chosenItem = sc.nextInt();
+			if (chosenItem == 1) {
+				usingItem();
+			}
+			else {
+				System.out.println();
+			}
 		}
 	}
 	
@@ -418,16 +424,71 @@ public class GameEnvironment {
 		System.out.println("Selling Items or Monsters ? 1 or 2 \n");
 		Scanner sc = new Scanner(System.in);
 		int chosenItem = sc.nextInt();
-		if (chosenItem == 1) {
+		if (chosenItem == 1 && getYourItems().size() > 0) {
 			sellingItems(); 
-			 
-		} else if (chosenItem == 2) {
+			System.out.println(gold);
+				 
+		} else if (chosenItem == 2 && getYourTeam().size() > 1) {
 			sellingMonsters(); 
+			System.out.println(gold);
+			}
+		else {
+			System.out.println("\n");
 		}
-		System.out.println(gold);
 	}
 
-
+	public void visitingStore() { 
+		if (day > 1) {
+			System.out.println("Current gold: " + gold);
+			System.out.println("Would you like To buy or sell an item / monster \n");
+			System.out.println("Please pick numbers 1 or 2 (anything else to carry on to next fight) \n");
+			Scanner sc = new Scanner(System.in);
+			int chosenItem = sc.nextInt();
+			if (chosenItem == 1) {
+				createStore();
+				System.out.println("Would you like to buy another item or sell and item? 1 = return to shop or any number to skip\n");
+				int chosenItem1 = sc.nextInt();
+				if (chosenItem1 == 1){
+					visitingStore();   
+				}
+				else {
+					System.out.println("\n"); 
+				}
+			} else if (chosenItem == 2) {
+				sellingToStore(); 
+				System.out.println("Would you like to buy another item or sell and item? 1 = return to shop or any number to skip\n");
+				int chosenItem1 = sc.nextInt();
+				if (chosenItem1 == 1){
+					visitingStore(); 
+				}
+				else {
+					System.out.println("\n");
+				}
+			}else {
+				resetStoreItems(); 
+				System.out.println("Now left the store \n");
+			}
+		}
+	}
+	
+	public void usingItems() {
+		if (day > 1) {
+			System.out.println("Would you like To use your Items on your monsters? yes or no. \n");
+			System.out.println("Please pick numbers 1 or anything else to carry on to next fight \n");
+			Scanner sc = new Scanner(System.in);
+			int chosenItem = sc.nextInt();
+			if (chosenItem == 1) {
+				useItems(); 
+				System.out.println("would you like to use another item? yes or no \n");
+				int chosenItem1 = sc.nextInt();
+				if (chosenItem1 == 1){
+					usingItems(); 
+				}
+			} else {
+				System.out.println("Now moving to next battle \n");
+			}
+		}
+	}
 	/**First allows the user to select a given valid battle by integer or iterate to the next day
 	 * 
 	 * If a battle is chosen, calls Battle class to generate a battle. 
@@ -549,6 +610,9 @@ public class GameEnvironment {
 				}
 				game.createBattle();
 			}
+			game.storeItemsGeneration();
+			game.visitingStore();
+			game.usingItems();
 			
 			for(Monster mon: game.getYourTeam()) {
 				mon.updateCurrentHealth(mon.getHealAmount());
