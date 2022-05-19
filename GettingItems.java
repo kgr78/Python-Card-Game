@@ -7,8 +7,9 @@ public class GettingItems {
 	private int buyPrice;
 	private int upperPrice; 
 	private int lowerPrice; 
+	private int attackUpdate; 
 	
-	GettingItems(String name, int healthBoost, boolean faintStatus, String description, int sell, int buy, int lowPrice, int upPrice) {
+	GettingItems(String name, int healthBoost, boolean faintStatus, String description, int sell, int buy, int lowPrice, int upPrice, int attackingUpdate) {
 		this.itemName = name; 
 		this.health = healthBoost; 
 		this.fainted = faintStatus; 
@@ -17,6 +18,7 @@ public class GettingItems {
 		this.buyPrice = buy; 
 		this.upperPrice = upPrice; 
 		this.lowerPrice = lowPrice; 
+		this.attackUpdate = attackingUpdate; 
 	}
 	
 	public int getSellPrice() {
@@ -47,6 +49,9 @@ public class GettingItems {
 	}
 	public int getBuyPrice() {
 		return buyPrice; 
+	}
+	public int getAttackUpdate() {
+		return attackUpdate; 
 	}
 	
 	public String toString() {

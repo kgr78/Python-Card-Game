@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -186,6 +187,7 @@ public class GameEnvironment {
 	/***/
 	public void resetStoreItems() {
 		getStoreItems().clear(); 
+		getStoreMon().clear(); 
 	}
 	
 	/**Generates the three enemy teams dependent on the day*/
@@ -302,8 +304,9 @@ public class GameEnvironment {
 	}
 	/**Creates store and lets person choose items and monsters*/
 	public void createStore() {
-		System.out.println("ITEM STORE FOR ITEMS: \n");
+		System.out.println("ITEM STORE FOR ITEMS:");
 		System.out.println("Items will be added to invetory and can be used after / before battles \n");
+		System.out.println("Pick and item between 1 - 6 or press anything else to leave");
 		for (int i = 0; i < getStoreItems().size();i++) 
 	      { 		      
 	          System.out.println(getStoreItems().get(i).toString()); 		
@@ -353,7 +356,7 @@ public class GameEnvironment {
 	public GettingItems selectItem() {
 		Scanner sc = new Scanner(System.in);
 		GettingItems item; 
-		System.out.println("Select which item to sell: 0 - "+getYourItems().size());
+		System.out.println("Select which item: 0 - "+getYourItems().size());
 		for(GettingItems items : yourItems) {
 			System.out.println(items.toString());
 		}
@@ -364,18 +367,19 @@ public class GameEnvironment {
 	
 	/**Picks the monsters from players team to use and item on the monster*/
 	public void usingItem() {
-		System.out.println("Pick Monster to Use item on\n");
 		Monster mon = selectMonster(); 
 		GettingItems item = selectItem(); 
 		item.getFainted(); 
 		if (mon.getfaintStatus() == true && item.getFainted() == false) {
 			mon.setfaintStatus(false);
+			mon.updateAttack(item.getAttackUpdate(), 3); 
 			mon.updateCurrentHealth(item.getHealing());
 			getYourItems().remove(item); 
 			System.out.println("Item removed from use"); 
 		}
 		else if (mon.getfaintStatus() == false){
 			mon.updateCurrentHealth(item.getHealing());
+			mon.updateAttack(item.getAttackUpdate(), 3); 
 			getYourItems().remove(item); 
 			System.out.println("Item removed from use"); 
 		}
@@ -389,19 +393,18 @@ public class GameEnvironment {
 	/**Uses items on Monsters and takes out of the inventory*/ 
 	public void useItems() {
 		if (getYourItems().size() > 0) {
-			System.out.println("Pick Item to Use");
-			for (int i = 0; i < getYourItems().size();i++) 
-		      { 		      
-		          System.out.println(getYourItems().get(i)); 		
-		      } 
+			System.out.println("1 = use items or anything else to leave");
 			Scanner sc = new Scanner(System.in);
 			int chosenItem = sc.nextInt();
 			if (chosenItem == 1) {
 				usingItem();
 			}
-			else {
+			else{
 				System.out.println();
 			}
+		}
+		else {
+			System.out.println("Unable to use items becuase none in inventory"); 
 		}
 	}
 	
@@ -420,20 +423,32 @@ public class GameEnvironment {
 	
 	/**Used to sell items and monsters owned by player back to store*/
 	public void sellingToStore() {
-		System.out.println("Current gold: " + gold);
-		System.out.println("Selling Items or Monsters ? 1 or 2 \n");
-		Scanner sc = new Scanner(System.in);
-		int chosenItem = sc.nextInt();
-		if (chosenItem == 1 && getYourItems().size() > 0) {
-			sellingItems(); 
-			System.out.println(gold);
-				 
-		} else if (chosenItem == 2 && getYourTeam().size() > 1) {
-			sellingMonsters(); 
-			System.out.println(gold);
+		try {
+			System.out.println("Current gold: " + gold);
+			System.out.println("Selling Items or Monsters ? 1 ,2 or anything else to leave\n");
+			Scanner sc = new Scanner(System.in);
+			int chosenItem = sc.nextInt();
+			if (chosenItem == 1 && getYourItems().size() > 0) {
+				sellingItems(); 
+				System.out.println(gold);
+					 
+			} else if (chosenItem == 2 && getYourTeam().size() > 1) {
+				sellingMonsters(); 
+				System.out.println(gold);
+			}else if (chosenItem == 2 && getYourTeam().size() < 1) {
+				System.out.println("Unable to sell because only 1 monster in team");
+				System.out.println("Must keep 1 Monster in team for battle");
+			}	else if (chosenItem == 1 && getYourItems().size() == 0) {
+				System.out.println("No items in inventory please pick some monsters to sell or buy some items");
+				sellingToStore(); 
 			}
-		else {
-			System.out.println("\n");
+					 
+			else {
+				System.out.println("\n");
+			}
+		}catch(InputMismatchException e) {
+			System.out.println("Please enter a valid number from the choices \n");
+			sellingToStore();  
 		}
 	}
 
@@ -443,50 +458,66 @@ public class GameEnvironment {
 			System.out.println("Would you like To buy or sell an item / monster \n");
 			System.out.println("Please pick numbers 1 or 2 (anything else to carry on to next fight) \n");
 			Scanner sc = new Scanner(System.in);
-			int chosenItem = sc.nextInt();
-			if (chosenItem == 1) {
-				createStore();
-				System.out.println("Would you like to buy another item or sell and item? 1 = return to shop or any number to skip\n");
-				int chosenItem1 = sc.nextInt();
-				if (chosenItem1 == 1){
-					visitingStore();   
+			try {
+				int chosenItem = sc.nextInt();
+				if (chosenItem == 1) {
+					createStore();
+					System.out.println("Would you like to buy another item or sell and item? 1 = return to shop or 0 to leave shop\n");
+					int chosenItem1 = sc.nextInt();
+					if (chosenItem1 == 1){
+						visitingStore();   
+					}
+					else {
+						resetStoreItems(); 
+						System.out.println("Now left the store \\n"); 
+					}
+				} else if (chosenItem == 2) {
+					sellingToStore(); 
+					System.out.println("Would you like to buy another item or sell and item? 1 = return to shop or any number to skip\n");
+					int chosenItem1 = sc.nextInt();
+					if (chosenItem1 == 1){
+						visitingStore(); 
+					}
+					else {
+						resetStoreItems(); 
+						System.out.println("Now left the store \\n");
+					}
+				}else{
+					resetStoreItems(); 
+					System.out.println("Now left the store \n");
 				}
-				else {
-					System.out.println("\n"); 
-				}
-			} else if (chosenItem == 2) {
-				sellingToStore(); 
-				System.out.println("Would you like to buy another item or sell and item? 1 = return to shop or any number to skip\n");
-				int chosenItem1 = sc.nextInt();
-				if (chosenItem1 == 1){
-					visitingStore(); 
-				}
-				else {
-					System.out.println("\n");
-				}
-			}else {
-				resetStoreItems(); 
-				System.out.println("Now left the store \n");
+				
+			}catch(InputMismatchException e) {
+				System.out.println("Please enter a valid number from the choices \n");
+				visitingStore(); 
 			}
+			
+			
 		}
 	}
 	
 	public void usingItems() {
-		if (day > 1) {
-			System.out.println("Would you like To use your Items on your monsters? yes or no. \n");
-			System.out.println("Please pick numbers 1 or anything else to carry on to next fight \n");
-			Scanner sc = new Scanner(System.in);
-			int chosenItem = sc.nextInt();
-			if (chosenItem == 1) {
-				useItems(); 
-				System.out.println("would you like to use another item? yes or no \n");
-				int chosenItem1 = sc.nextInt();
-				if (chosenItem1 == 1){
-					usingItems(); 
+		try {
+			if (day > 1) {
+				System.out.println("Would you like To use your Items on your monsters? yes or no.");
+				System.out.println("Please pick numbers 1 or anything else to carry on to next fight \n");
+				Scanner sc = new Scanner(System.in);
+				int chosenItem = sc.nextInt();
+				if (chosenItem == 1) {
+					useItems(); 
+					System.out.println("would you like to use another item? yes or no \n");
+					int chosenItem1 = sc.nextInt();
+					if (chosenItem1 == 1){
+						usingItems(); 
+					}
+				} else {
+					System.out.println("Now moving to next battle \n");
 				}
-			} else {
-				System.out.println("Now moving to next battle \n");
 			}
+			
+		}catch(InputMismatchException e) {
+			System.out.println("Please enter a valid number from the choices \n");
+			usingItems(); 
 		}
 	}
 	/**First allows the user to select a given valid battle by integer or iterate to the next day
@@ -496,52 +527,58 @@ public class GameEnvironment {
 	 * If user selects to skip the day, the day counter increases by one.
 	 */
 	public void createBattle() {
-		levelGeneration();
-		Scanner sc = new Scanner(System.in);
-		String bat1 = "";
-		String bat2 = "";
-		String bat3 = "";
-		boolean outcome = false;
-		
-		if(getValidBattles().contains(1) == true) {
-			System.out.println("BATTLE 1: Enemy Team"+"\n"+getEnemyTeamOne());
-			bat1 = "1, ";
-		}
-		if(getValidBattles().contains(2) == true) {
-			System.out.println("BATTLE 2: Enemy Team"+"\n"+getEnemyTeamTwo());
-			bat2 = "2, ";
-		}
-		if(getValidBattles().contains(3) == true) {
-			System.out.println("BATTLE 3: Enemy Team"+"\n"+getEnemyTeamThree());
-			bat3 = "3, ";
-		}
-		System.out.println("Select 4 to skip to the next day");
-		System.out.println("Select Battle: ("+bat1+bat2+bat3+"or skip 4)");
-		int chosenBattle = sc.nextInt();
-		if (chosenBattle == 1) {
-			getValidBattles().remove(Integer.valueOf(chosenBattle));
-			Battle bat = new Battle(getYourTeam(), getEnemyTeamOne());
-			System.out.println(bat.fullBattle());
-			outcome = bat.getOutcome();
-		} else if (chosenBattle == 2) {
-			getValidBattles().remove(Integer.valueOf(chosenBattle));
-			Battle bat = new Battle(getYourTeam(), getEnemyTeamTwo());
-			System.out.println(bat.fullBattle());
-			outcome = bat.getOutcome();
-		} else if (chosenBattle == 3) {
-			getValidBattles().remove(Integer.valueOf(chosenBattle));
-			Battle bat = new Battle(getYourTeam(), getEnemyTeamThree());
-			System.out.println(bat.fullBattle());
-			outcome = bat.getOutcome();
-		} else {
-			increaseDay();
-		}
-		addPointsFromBattle(getDifficulty(), chosenBattle, outcome);
-		addGoldFromBattle(getDifficulty(), chosenBattle, outcome);
-		if(outcome == true) {
-			for(Monster mon: getYourTeam()) {
-				mon.levelUp();
+		try {
+			levelGeneration();
+			Scanner sc = new Scanner(System.in);
+			String bat1 = "";
+			String bat2 = "";
+			String bat3 = "";
+			boolean outcome = false;
+			
+			if(getValidBattles().contains(1) == true) {
+				System.out.println("BATTLE 1: Enemy Team"+"\n"+getEnemyTeamOne());
+				bat1 = "1, ";
 			}
+			if(getValidBattles().contains(2) == true) {
+				System.out.println("BATTLE 2: Enemy Team"+"\n"+getEnemyTeamTwo());
+				bat2 = "2, ";
+			}
+			if(getValidBattles().contains(3) == true) {
+				System.out.println("BATTLE 3: Enemy Team"+"\n"+getEnemyTeamThree());
+				bat3 = "3, ";
+			}
+			System.out.println("Select 4 to skip to the next day");
+			System.out.println("Select Battle: ("+bat1+bat2+bat3+"or skip 4)");
+			int chosenBattle = sc.nextInt();
+			if (chosenBattle == 1) {
+				getValidBattles().remove(Integer.valueOf(chosenBattle));
+				Battle bat = new Battle(getYourTeam(), getEnemyTeamOne());
+				System.out.println(bat.fullBattle());
+				outcome = bat.getOutcome();
+			} else if (chosenBattle == 2) {
+				getValidBattles().remove(Integer.valueOf(chosenBattle));
+				Battle bat = new Battle(getYourTeam(), getEnemyTeamTwo());
+				System.out.println(bat.fullBattle());
+				outcome = bat.getOutcome();
+			} else if (chosenBattle == 3) {
+				getValidBattles().remove(Integer.valueOf(chosenBattle));
+				Battle bat = new Battle(getYourTeam(), getEnemyTeamThree());
+				System.out.println(bat.fullBattle());
+				outcome = bat.getOutcome();
+			} else {
+				increaseDay();
+			}
+			addPointsFromBattle(getDifficulty(), chosenBattle, outcome);
+			addGoldFromBattle(getDifficulty(), chosenBattle, outcome);
+			if(outcome == true) {
+				for(Monster mon: getYourTeam()) {
+					mon.levelUp();
+				}
+			}
+			
+		}catch(InputMismatchException e) {
+			System.out.println("Please enter a valid number from the choices \n");
+			createBattle(); 
 		}
 	}
 	
@@ -610,13 +647,16 @@ public class GameEnvironment {
 				}
 				game.createBattle();
 			}
-			game.storeItemsGeneration();
-			game.visitingStore();
-			game.usingItems();
+			
+				game.storeItemsGeneration();
+				game.visitingStore();
+				game.usingItems();
+
 			
 			for(Monster mon: game.getYourTeam()) {
 				mon.updateCurrentHealth(mon.getHealAmount());
 			}
 		}
 	}
+
 }

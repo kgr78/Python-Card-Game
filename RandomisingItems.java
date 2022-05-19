@@ -7,7 +7,7 @@ public class RandomisingItems {
 	
 	public RandomisingItems(int i) {
 		Random x = new Random();
-		int item = x.nextInt(1,4);	
+		int item = x.nextInt(1,5);	
 		if(i == 1) {
 			this.minusPriceUpper = 70;
 			createsItems(item); 
@@ -15,7 +15,11 @@ public class RandomisingItems {
 			this.plusPriceLower = 20;
 			this.minusPriceUpper = 30;
 			createsItems(item); 
-		} else {
+		} else if (i==3) {
+			this.plusPriceLower = 20; 
+			this.minusPriceUpper = 20; 
+		}
+		else {
 			this.plusPriceLower = 50;
 			createsItems(item);
 		}
@@ -28,6 +32,9 @@ public class RandomisingItems {
 		}
 		else if (i==2) {
 			t = new smallHealthItem(20);	
+		}
+		else if (i==3) {
+			t = new AttackBuff(25); 
 		}
 		else {
 			t = new faintHealItem(15);
@@ -47,9 +54,13 @@ public class RandomisingItems {
 			GettingItems buy2 = new smallHealthItem(buyPrice);
 			return buy2;
 		}
+		else if (i == 3) {
+			GettingItems buy3 = new AttackBuff(buyPrice); 
+			return buy3; 
+		}
 		else {
-			GettingItems buy3 = new faintHealItem(buyPrice);
-			return buy3;
+			GettingItems buy4 = new faintHealItem(buyPrice);
+			return buy4;
 		}	
 	}
 	
